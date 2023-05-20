@@ -1,4 +1,4 @@
-from PyPDF2 import PdfFileReader
+from PyPDF2 import PdfReader
 import os
 from datetime import datetime
 
@@ -66,10 +66,10 @@ while(True):
         files.append(givenName)
 
 for fileName in files:
-    pdf = PdfFileReader(fileName + ".pdf")
+    pdf = PdfReader(fileName + ".pdf")
     print("  *** 파일을 불러왔습니다: " + fileName + ".pdf")
-    for pageNumber in range(pdf.numPages - 1):
-        context = pdf.getPage(pageNumber).extractText()
+    for pageNumber in range(len(pdf.pages) - 1):
+        context = pdf.pages[pageNumber].extract_text()
         for word in context.split(' '):
             if not word.encode().isalpha():
                 error += 1 #영어가 아님
@@ -86,8 +86,8 @@ for fileName in files:
 notFiltered = w2.copy()
 notFiltered.update(w1)
 
-now = datetime.now()
-date = str(now.year) + str(now.month) + str(now.day)
+current = datetime.now()
+date = str(current.year) + str(current.month) + str(current.day)
 
 fileName1 = "필터링을 거친 결과물 (" + date + ").txt"
 fileName2 = "필터링을 거치치 않은 결과물 (" + date + ").txt"
@@ -100,7 +100,7 @@ if os.path.isfile(fileName2):
     os.remove(fileName2)
     print(" ***** 기존 파일 ( " + fileName2 + " ) 이 제거 되었습니다")
 
-writeTxt(notFiltered, " * 다음 단어를 제외한 수치 입니다: " + ", ".join(additionalBanWords), files, "필터링을 거친 결과물 (" + date + ").txt")
-writeTxt(w2, " * 아무런 필터링을 거치치 않은 수치 입니다", files, "필터링을 거치치 않은 결과물 (" + date + ").txt")
+writeTxt(w2, " * 다음 단어를 제외한 수치 입니다: " + ", ".join(additionalBanWords), files, "필터링을 거친 결과물 (" + date + ").txt")
+writeTxt(notFiltered, " * 아무런 필터링을 거치치 않은 수치 입니다", files, "필터링을 거치치 않은 결과물 (" + date + ").txt")
 
 print(" ------- 파일이 저장 되었습니다 -------")
